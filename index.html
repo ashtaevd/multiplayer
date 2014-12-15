@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>TG Papier</title>
+		<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+		<script src="http://code.highcharts.com/highcharts.js"></script>
+		<script src="http://code.highcharts.com/modules/exporting.js"></script>
+		<script>
+
+		$(document).ready(function(){
+
+			var answer = prompt("Choose a subject for this publication (Use no spaces between multiple words)");
+
+			$(".heading").html("<h2>TG Papier</h2>");
+			$(".names").html("<h3>Publication quotidienne sur "+answer+"</h3>");
+
+			// I N S T A G R A M  -------------------------------
+
+			$.getJSON('http://cooper-union-instagram-proxy.herokuapp.com/search/tag/'+answer+'?count=26', function(response){
+
+				var images = [];
+				var tags = []
+
+				for (var i=0; i<26; i++) {
+					var img = response[i].images.standard_resolution.url;
+					images.push(img);
+					var tag = response[i].tags[0];
+					tags.push(tag);
+				}// closes for loop
+				console.log(tags);
+
+				// for (var i=0; i<10; i++){
+					$(".names").append("<h5>"+tags[0]+" "+tags[1]+" "+tags[2]+" "+tags[3]+" "+tags[4]+"</h5>");
+				// }
+
+				for (var i=0; i<10; i++){
+					$(".left").append('<div class="slot" id="slot'+i+'"></div>');
+					$("#slot" + i +"").append('<img src="'+images[i]+'"/>');
+				}//closes for loop
+
+				for (var i=10; i<16; i++){
+					$(".center").append('<div class="slot" id="slot'+i+'"></div>');
+					$("#slot" + i +"").append('<img src="'+images[i]+'"/>');
+				}//closes for loop
+
+				for (var i=16; i<26; i++){
+					$(".right").append('<div class="slot" id="slot'+i+'"></div>');
+					$("#slot" + i +"").append('<img src="'+images[i]+'"/>');
+				}//closes for loop
+			
+     		}); //closes instagram JSON
+
+			// T W I T T E R  ------------------------------------
+
+			$.getJSON("http://cooper-union-search-proxy.herokuapp.com/twitter/search/"+answer+"%20%2Dhttp%20%2DRT?count=26",function(response){
+
+
+				var tweets = [];
+				var names = [];
+
+				for (var i=0; i<26; i++){
+					var twt = response.statuses[i].text;
+					tweets.push(twt);
+					var nm = response.statuses[i].user.screen_name;
+					names.push(nm);
+				}// closes for loop
+
+				for (var i=0; i<26; i++){
+					$("#slot"+i+"").append("<h5>"+names[i]+"</h5>");
+					$("#slot"+i+"").append("<h4>"+tweets[i]+"</h4>");
+				}//closes for loop
+
+			});//closes twitter JSON
+
+    	}); //closes jQuery
+
+    	</script>
+		<style>
+			@import url(http://fonts.googleapis.com/css?family=Forum);
+			@import url(http://fonts.googleapis.com/css?family=Raleway:100);
+			@import url(http://fonts.googleapis.com/css?family=EB+Garamond);
+
+			body, h1, h2 {
+				margin: 0 0 0 0;
+				border: 0 0 0 0;
+				overflow:hidden;
+			}
+
+			.whole	{
+				width: 100%;
+				margin: auto;
+				position:absolute;
+			}
+
+			.heading {
+				padding:8% 0 0 0;
+				text-align:center;
+				font-size: 2em;
+				font-family:Raleway;
+				text-transform: capitalize;
+			}
+
+			.names {
+				font-family:Raleway;
+				text-transform: uppercase;
+				font-size: 8pt;
+				text-align:center;
+				padding-bottom: 12%;
+			}
+
+			.names h5 {
+				font-family: EB Garamond;
+				word-spacing: 60px;
+				margin: 5% 0 0 0;
+			}
+
+			.left, .right {
+				width:26%;
+				float:left;
+			}
+
+			.center {
+				width:48%;
+				float:left;
+			}
+
+			.slot {
+				background-color: white;
+				position:relative;
+				float:left;
+				margin:5% 5% 8% 5%;
+				width:90%;
+				border-bottom: medium solid gainsboro;
+				text-align: center;
+			}
+
+			.center .slot {
+				width:80%;
+				margin:5% 10% 8% 10%;
+			}
+
+			.slot img {
+				width:100%;
+				position:center;
+			}
+
+			.slot h5 {
+				font-family: EB Garamond;
+				margin-bottom: 0;
+			}
+
+			.slot h4 {
+				font-size: .65em;
+				font-family: Forum;
+			}
+
+			.center .slot h5 {
+				font-size: 1em;
+			}
+
+			.center .slot h4 {
+				font-size:1.2em;
+			}
+
+		</style>
+	<head>
+	<body>
+		<h1 class="heading"></h1>
+		<h3 class="names"><h3>
+
+		<section class="whole">
+			<section class="left">
+			</section>
+			<section class="center">
+			</section>
+			<section class="right">
+			</section>
+		</section> <!-- closes Whole -->
+
+	</body>
+</html>
