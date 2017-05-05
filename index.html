@@ -186,6 +186,12 @@
 				rotation: camRot
 
 			});
+		    
+		// Reposition camera to the center if too far beyond the limit.
+	        if (camPos.x >= 15 || camPos.x <= -15 || camPos.z >= 15 || camPos.z <= -15) {
+	        	console.log("Player reached the map limit");
+	        	camera.setAttribute( "position", {"x": 0, "y":1.6, "z":0} );
+	        };
 
 	    }
 
