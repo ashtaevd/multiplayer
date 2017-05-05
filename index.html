@@ -120,7 +120,8 @@
 
 		var childAdded = function () {
 			usersRef.on('child_added', snap => { 
-
+				
+				var playerID = playerRef.key;
 				snapID = snap.key;
 				// console.log ( "New player's ID is: " + snapID)
 				snapInfo = snap.val();
