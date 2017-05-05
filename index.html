@@ -98,6 +98,8 @@
 
 			aframeInit(); 
 
+
+
 			// Here I should pass a unique ID to the aframe module
 			// aframeInit( snapID ); 
 
@@ -105,34 +107,87 @@
 
 		var appendPlayer = function ( aframeID ) {
 
-				var blockEntity = document.createElement('a-entity');
-				blockEntity.setAttribute('flying-block', '');
-				scene.appendChild(blockEntity);
-				// blockEntity.setAttribute('position', { x: 0, y: 5.5, z: 0 });
-				// blockEntity.setAttribute('rotation', { x: 0, y: 0, z: 0 });
-				blockEntity.setAttribute("id", aframeID)
+			var blockEntity = document.createElement('a-entity');
+			blockEntity.setAttribute('flying-block', '');
+			scene.appendChild(blockEntity);
+			// blockEntity.setAttribute('position', { x: 0, y: 5.5, z: 0 });
+			// blockEntity.setAttribute('rotation', { x: 0, y: 0, z: 0 });
+			blockEntity.setAttribute("id", aframeID)
 
-			}
+		};
 
-		//triggers only for newly connected players
-		usersRef.on('child_added', snap => { 
+		//Triggers with the initial data AND for newly connected players
 
-			snapID = snap.key;
-			console.log ( "New player's ID is: " + snapID)
-			snapInfo = snap.val();
+		var childAdded = function () {
+			usersRef.on('child_added', snap => { 
 
-			// Add a block to the scene if the key doesn't match the main player
-			if (snapID != playerID) {
+				snapID = snap.key;
+				// console.log ( "New player's ID is: " + snapID)
+				snapInfo = snap.val();
 
-				var scene = document.querySelector('a-scene');
-				appendPlayer (snapID);
+				// Add a block to the scene if the key doesn't match the main player
+				if (snapID != playerID) {
 
-				document.querySelector('#' + snapID).setAttribute("material", "color", snapInfo.color);
+					var scene = document.querySelector('a-scene');
+					appendPlayer (snapID);
 
-			} 			
+					blockInstance = document.querySelector('#' + snapID);
 
-		});
+					blockInstance.setAttribute('position', snapInfo["position"] );
+					blockInstance.setAttribute('rotation', snapInfo["rotation"] );
+					document.querySelector('#' + snapID).setAttribute("material", "color", snapInfo.color);
 
+					console.log(snapInfo, snapID);
+
+				} 			
+
+			});
+
+		}
+
+		// Add existing players.
+		// usersRef.once('value', snap => {
+
+		// 	var currentPlayers = snap.val()
+		// 	// console.log(currentPlayers);
+		// 	// console.log(Object.keys(currentPlayers).length)
+		// 	// console.log("Value asked once");
+
+		// 	var scene = document.querySelector('a-scene');
+
+		// 	for (i = 0; i < Object.keys(snap.val()).length; i ++) {
+
+		// 		var createEntity = function () {
+
+		// 		eachPlayer = currentPlayers[Object.keys(currentPlayers)[i]]
+		// 		currentKeys = Object.keys(currentPlayers) //each key present in the database
+		// 		blockInstance = document.querySelector('#' + currentKeys[i]);
+		// 		// console.log(blockInstance);
+		// 		// console.log(eachPlayer);
+		// 		console.log(currentKeys[i])
+		// 		// if (currentKeys[i] != playerID){
+
+		// 		// appendPlayer ( currentKeys[i] );
+
+		// 		addProperties();
+
+		// 		};
+
+		// 		var addProperties = function() { 
+
+		// 			document.querySelector('#' + currentKeys[i]).setAttribute("material", "color", eachPlayer["color"]);	
+		// 			blockInstance.setAttribute('position', eachPlayer["position"] )
+		// 			blockInstance.setAttribute('rotation', eachPlayer["rotation"] )	
+
+		// 			console.log(blockInstance)	
+
+		// 		}
+				
+		// 		createEntity() ;
+
+		// 	}
+
+		// });
 
 		usersRef.on('child_changed', snap => {
 
@@ -141,10 +196,10 @@
 
 			if (snapID != playerRef.key) {
 
-				console.log (snapID);
+				// console.log (snapID);
 				blockInstance = document.querySelector('#' + snapID);
 
-				console.log (playerInfo["position"]);
+				// console.log (playerInfo["position"]);
 
 				blockInstance.setAttribute('position', playerInfo["position"] )
 				blockInstance.setAttribute('rotation', playerInfo["rotation"] )
@@ -161,7 +216,12 @@
 
 			// console.log( snapID ); //returns "Players" as the key
 
+			// Disconnect and remove
 			// playerRef.onDisconnect().remove();
+
+			// playerRef.onDisconnect().update({
+			// 	onlineState: false
+			// });
 
 		});
 
@@ -203,12 +263,6 @@
 				});
 			});
 	    });
-
-		function setPosition( newPos ) {
-
-			this.el.setAttribute('position', newPos);
-
-		}
 
 
 		function createAnimation(event){
@@ -263,6 +317,8 @@
 
 				});
 
+				childAdded();
+
 			}
 
 			</script>
@@ -284,7 +340,6 @@
 			    }
 			});
 
-			</script>
 			</script>
 			
 </html>
