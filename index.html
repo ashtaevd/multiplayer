@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 
-		<title>Camera Block</title>
+		<title>Ashtaev Multiplayer</title>
 
 		<script src="js/randomColor.js"></script>
 		<script src="https://www.gstatic.com/firebasejs/3.7.5/firebase.js"></script>
@@ -91,17 +91,11 @@
 
 			}
 
-			// do something now that the player is created
-
+			// Create a unique ID for the main user now that he's initialized.
 			var playerID = playerRef.key;
 			console.log ("Main player ID is: " + playerID);
 
 			aframeInit(); 
-
-
-
-			// Here I should pass a unique ID to the aframe module
-			// aframeInit( snapID ); 
 
 		}
 
@@ -110,21 +104,17 @@
 			var blockEntity = document.createElement('a-entity');
 			blockEntity.setAttribute('flying-block', '');
 			scene.appendChild(blockEntity);
-			// blockEntity.setAttribute('position', { x: 0, y: 5.5, z: 0 });
-			// blockEntity.setAttribute('rotation', { x: 0, y: 0, z: 0 });
 			blockEntity.setAttribute("id", aframeID)
 
 		};
 
 		//Triggers with the initial data AND for newly connected players
-
 		var childAdded = function () {
 			usersRef.on('child_added', snap => { 
-				
+
 				var playerID = playerRef.key;
-				snapID = snap.key;
-				// console.log ( "New player's ID is: " + snapID)
-				snapInfo = snap.val();
+				var snapID = snap.key;
+				var snapInfo = snap.val();
 
 				// Add a block to the scene if the key doesn't match the main player
 				if (snapID != playerID) {
@@ -138,69 +128,21 @@
 					blockInstance.setAttribute('rotation', snapInfo["rotation"] );
 					document.querySelector('#' + snapID).setAttribute("material", "color", snapInfo.color);
 
-					console.log(snapInfo, snapID);
-
 				} 			
 
 			});
 
 		}
 
-		// Add existing players.
-		// usersRef.once('value', snap => {
-
-		// 	var currentPlayers = snap.val()
-		// 	// console.log(currentPlayers);
-		// 	// console.log(Object.keys(currentPlayers).length)
-		// 	// console.log("Value asked once");
-
-		// 	var scene = document.querySelector('a-scene');
-
-		// 	for (i = 0; i < Object.keys(snap.val()).length; i ++) {
-
-		// 		var createEntity = function () {
-
-		// 		eachPlayer = currentPlayers[Object.keys(currentPlayers)[i]]
-		// 		currentKeys = Object.keys(currentPlayers) //each key present in the database
-		// 		blockInstance = document.querySelector('#' + currentKeys[i]);
-		// 		// console.log(blockInstance);
-		// 		// console.log(eachPlayer);
-		// 		console.log(currentKeys[i])
-		// 		// if (currentKeys[i] != playerID){
-
-		// 		// appendPlayer ( currentKeys[i] );
-
-		// 		addProperties();
-
-		// 		};
-
-		// 		var addProperties = function() { 
-
-		// 			document.querySelector('#' + currentKeys[i]).setAttribute("material", "color", eachPlayer["color"]);	
-		// 			blockInstance.setAttribute('position', eachPlayer["position"] )
-		// 			blockInstance.setAttribute('rotation', eachPlayer["rotation"] )	
-
-		// 			console.log(blockInstance)	
-
-		// 		}
-				
-		// 		createEntity() ;
-
-		// 	}
-
-		// });
 
 		usersRef.on('child_changed', snap => {
 
-			snapID = snap.key;
-			playerInfo = snap.val();
+			var snapID = snap.key;
+			var playerInfo = snap.val();
 
 			if (snapID != playerRef.key) {
 
-				// console.log (snapID);
 				blockInstance = document.querySelector('#' + snapID);
-
-				// console.log (playerInfo["position"]);
 
 				blockInstance.setAttribute('position', playerInfo["position"] )
 				blockInstance.setAttribute('rotation', playerInfo["rotation"] )
@@ -212,8 +154,8 @@
 		//triggers once initially, and then with every change
 		usersRef.on('value', snap => { 
 
-			snapID = snap.key;
-			usersObject = snap.val();
+			var snapID = snap.key;
+			var usersObject = snap.val(); //returns the object of 'Players,' which contains everyone's ID and subsequent position information
 
 			// console.log( snapID ); //returns "Players" as the key
 
@@ -290,13 +232,9 @@
 	         			// this.el.setAttribute("material", "color", "#00ffff");
 	         			this.el.setAttribute("geometry", {"depth": 1, "height": 2, "width": 1} );
 
-	         			// var position = this.el.getAttribute('position');
-
-	         			console.log (usersObject);
-
 						var hitColor = createAnimation("collisionAnim");
 						hitColor.setAttribute("attribute", "material.color");
-						// hitColor.setAttribute("begin", "collisionAnim");
+						hitColor.setAttribute("begin", "collisionAnim");
 						hitColor.setAttribute("from", "#00ffff");
 						hitColor.setAttribute("to", "#ff0000");
 						hitColor.setAttribute("dur", "500");
@@ -308,6 +246,10 @@
 
 					update: function () {
 
+						var position = this.el.getAttribute('position');
+
+						// if (position.x >= 15 || )
+
 					},
 
 					tick: function (time, timeDelta) {
@@ -317,6 +259,7 @@
 				});
 
 				childAdded();
+				// console.log (playerID)
 
 			}
 
